@@ -3,18 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
+
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Divyansh Harne",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.4",
     "cheerio": "^1.0.0-rc.10",
-    "express": "^4.17.1"
+    "dotenv": "^16.4.7",
+    "express": "^4.17.1",
+    "mysql2": "^3.12.0",
+    "schedule": "^0.5.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.13"

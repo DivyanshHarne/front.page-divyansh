@@ -1,27 +1,25 @@
-import axios from "axios"
-import cheerio from "cheerio"
-import express from "express"
+const express = require('express');
+const http = require('http');
+const scrapeStories = require('./services/hackerNewsScraper');
+const { saveStories, initalizeDatabase } = require('./services/database');
+const setupWebSocket = require('./services/websocket');
+require('dotenv').config();
+const {pool} = require('./services/database');
 
-const PORT = process.env.PORT || 5000
-const app = express()
+const app = express();
+const server = http.createServer(app);
+initalizeDatabase();
+// pool.execute('CREATE DATABASE HELLO');
+// WebSocket
+setupWebSocket(server);
 
-const URL = 'https://news.ycombinator.com/'
+// Periodic Scraping
+scrapeStories();
+setInterval(async () => {
+    const stories = await scrapeStories();
+    await saveStories(stories);
+}, 5 * 60 * 1000); // Every 5 minutes
 
-axios(URL)
-    .then(res => {
-        const htmlData = res.data
-        const $ = cheerio.load(htmlData)
-        const articles = []
-
-        $('.titleline', htmlData).each((index, element) => {
-            const title = $(element).children('a').text()
-            const titleURL = $(element).children('a').attr('href')
-            articles.push({
-                title,
-                titleURL
-            })
-        })
-        console.log(articles)
-    }).catch(err => console.error(err))
-
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`))
+server.listen(3000, () => {
+    console.log('Server running on port 3000');
+});
